@@ -1,17 +1,9 @@
-const axios = require("axios");
 const _ = require("lodash");
+const { loadBlogs } = require("../utils/loadblogs");
 
+//  Analysis Controller :
 module.exports.getBlogsServices = async () => {
-   const data = await axios.get(
-      `https://intent-kit-16.hasura.app/api/rest/blogs`,
-      {
-         headers: {
-            "x-hasura-admin-secret":
-               "32qR4KmXOIpsGPQKMqEJHGJS27G5s7HdSKO3gdtQd2kv5e852SiYwWNfxkZOBuQ6",
-         },
-      }
-   );
-   const blogs = data.data.blogs;
+   const blogs = await loadBlogs();
    // console.log(blogs);
 
    const totalNumberOfBlogs = blogs.length;
@@ -20,11 +12,23 @@ module.exports.getBlogsServices = async () => {
    const containsPrivacy = _.filter(blogs, (blog) =>
       _.includes(_.toLower(blog.title), "privacy")
    );
-   const uniqueTitleBlogs = _.uniqBy(blogs, (blog) => _.toLower(blog.title)).map(blog => blog.title);
+   const uniqueTitleBlogs = _.uniqBy(blogs, (blog) =>
+      _.toLower(blog.title)
+   ).map((blog) => blog.title);
    return {
       totalNumberOfBlogs,
       logiestTitleBlog,
       containsPrivacy,
       uniqueTitleBlogs,
    };
+};
+
+// search Controller :
+module.exports.getBlogSearchService = async (query) => {
+   console.log(query);
+   const blogs = await loadBlogs();
+   const matchedBlogs = blogs.filter((blog) =>
+      blog.title.toLowerCase().includes(query.toLowerCase())
+   );
+   return matchedBlogs;
 };

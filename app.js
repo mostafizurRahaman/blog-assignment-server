@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 //  use route middleware:
-app.use("/api/blog-stats", blogRouter);
+app.use("/api", blogRouter);
 
 //  export app :
 
